@@ -231,11 +231,7 @@
             <img src="assets/images/fig2_qd_semi_autonomous_teleop.png" alt="MY ALT TEXT" width="80%" />
           </a>
           <h2 class="content has-text-justified" style="text-align: left;">
-            An overview of the proposed teleoperation framework. 
-            We demonstrate two robotic manipulation tasks: (a) Sweep task and (b) Place task within our proposed framework. 
-            First, we capture the input scene as a depth image from the current scene. 
-            Then, SMORE provides selectable options to the user for both tasks. 
-            Once the user chooses their preferred option, the robot completes the task following the selected trajectory. 
+            Our proposed framework, <span style="font-weight: bold; color: red;">SMORE</span>, consists of two methods. The first is for the QD-based sampling method, which selects context vector-option pairs from the replay buffer based on their high reward values and diversity scores to construct mini-batches. The second method involves a policy gradient approach utilizing a mixture of latent variables. This is designed to learn multiple modes of policy distribution over high-level options, employing the sampled mini-batches.
           </h2>
         </div>
       </div>
@@ -266,7 +262,8 @@
                 <!-- Input the figure of LA-QDPP -->
                 <img src="assets/images/fig_extra_laqdpp.png" alt="MY ALT TEXT" width="100%" />
                 <figcaption class="video-caption">
-                  Description of the proposed LA-QDPP.
+                  Results of the proposed sampling method with varying weights of the parameter beta, which prioritize (a) diversity, (b) quality, and (c) quality-diversity aware sampling. 
+                  The parameter beta enables the sampling process to align with the desired policy objective flexibly.
                 </figcaption>
               </figure>
             </div>
@@ -280,7 +277,7 @@
                 <!-- Input the figure of MLPG -->
                 <img src="assets/images/fig_extra_mlpg.png" alt="MY ALT TEXT" width="100%" />
                 <figcaption class="video-caption">
-                  Description of the proposed MLPG.
+                  Coverage results for the Reacher-Quadrant task. Our proposed sampling method enhances the performance of diverse option generation across all baselines, achieving high coverage. Significantly, MLPG demonstrates the greatest enhancement in terms of performance within our experiments.
                 </figcaption>
               </figure>
             </div>
@@ -344,23 +341,25 @@
   <!-- End of user interaction videos -->
 
   <!-- Environments -->
-  <section class="section" style="margin-bottom: 120px;">
-
-    <div class="container">
-      <h2 class="title is-3">Environments</h2>
-      <h2 class="content has-text-justified" style="text-align: left; position: absolute;">
-        <p>
-          To validate the effectiveness of VRD, we conducted a set of experiments focusing on visual reasoning
-          performance.
-          In addition, we designed further experiments to evaluate the ability to infer human preferences, which we
-          divided into two categories: those based on semantic property and those based on spatial patterns.
-          Specifically, the performance of our proposed method is evaluated across three different environments: Block
-          Task, Polygon Task, and Household Task.
-        </p>
-      </h2>
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title is-3">Environments</h2>
+        <div id="environments" style="text-align: center;">
+          <a href="#environments">
+            <img src="assets/images/fig1_environments.png" alt="MY ALT TEXT" width="80%" />
+          </a>
+          <h2 class="content has-text-justified" style="text-align: left;">
+            We evaluate our method on four different environments. <strong>(a) Reacher-Quadrant Task:</strong> the agent's fingertip moves to the reachable space in a specific goal quadrant, 
+            <strong>(b) Place Task:</strong> The robot arm is required to place a target object in a safe area without causing any collisions, 
+            <strong>(c) Sweep Task:</strong> The robot arm needs to push the blocking objects to grasp a target object. 
+            <strong>(d) Hang Task:</strong> The robot arm hangs a target torus on a hook.
+          </h2>
+        </div>
+      </div>
     </div>
   </section>
-  <!-- End environments -->
+  <!-- End of Environments -->
 
   <!-- Baselines & Metrics -->
   <section class="hero is-small" style="margin-bottom: 35px;">
@@ -368,46 +367,12 @@
       <div class="container">
         <h2 class="title is-3">Baselines & Metrics</h2>
         <div id="Baselines & Metrics">
-          <p> We compare our method with other baselines, including large language models and a linear preference
-            extractor. For fair comparisons on visual reasoning, we utilize the same visual reasoning module (i.e.,
-            GPT-4V).</p>
-          <ul>
-            <li><strong>MLLM-Naive:</strong> An ablation of our approach that does not use the Visual Reasoning
-              Descriptor and Preference Reasoning Descriptor. MLLM-Naive infers scene descriptions for consecutive image
-              pairs in a similar way to our method but without using the VRD template. Then, this baseline interprets
-              the preference directly, using only an entire image sequence in a single interaction.</li>
-            <li><strong>MLLM-L2R:</strong> Inspired by Language-to-Reward (L2R), this baseline extracts normalized
-              object 2D position (ranging from 0.0 to 1.0) information for feature computation. Subsequently, we
-              integrate a code snippet generation module that produces a piece of code to compute preference weights
-              using the obtained object positions.</li>
-            <li><strong>Mutual-Distance-based Preference Extractor (MDPE):</strong> This baseline assumes that human
-              preferences are deterministic, following a linear user model as discussed in prior works. Within the
-              framework of linear models, MDPE computes the preference weights for each specific feature based on
-              pre-defined functions using the mutual distances between objects and then derives the preference from
-              these weights.</li>
+            <p>We compare the performance of MLPG to Proximal Policy Optimization (PPO)<sup>[1]</sup>, Soft Actor-Critic (SAC)<sup>[2]</sup>, and Deep Latent Policy Gradient (DLPG)<sup>[3]</sup>. To ensure a fair comparison, we use stochastic distributions for both PPO and SAC.</p><ul>
+            <ul>
+              <li><strong>PPO:</strong> PPO is an on-policy RL that ensures stable and efficient policy updates due to its clipped objective function.</li>
+              <li><strong>SAC:</strong> SAC is an off-policy RL that balances exploration and exploitation by adding policy entropy to the reward.</li>
+              <li><strong>DLPG:</strong> DLPG is a latent variable model-based RL that can design the policy to define the distribution over predefined trajectories.</li>
           </ul>
-
-          <p>Our evaluation metrics are the success rate of Visual Reasoning Descriptor (SR<sub>VRD</sub>) and the
-            success rate of Preference Reasoning Descriptor (SR<sub>PRD</sub>) for the given image sequences. In
-            particular, SR<sub>VRD</sub> is calculated based on the visual residual between the image sequences and is
-            defined as follows:</p>
-          <p>$$\text{SR}_\text{VRD} = \frac{1}{N-1} \sum_{k=1}^{N-1} \left( \frac{\sum_{l \in V_k} \mathbb{I}(l =
-            \hat{l})}{|V_k|} \right)$$</p>
-          <p>where \(| \cdot |\) means the number of elements in the set and \(\mathbb{I}\) represents an indicator
-            function that checks whether each element \(l\) within the predicted response \(V_k\) matches its
-            corresponding element \(\hat{l}\) in the ground truth visual residual \(\hat{V}_k\) for each consecutive
-            image pair. The elements of \(V_k\) and \(\hat{V}_k\) include (\(l^{\text{semantic}}_k\),
-            \(l^{\text{geometric}}_k\), \(l^{\text{description}}_k\)), and their respective ground truth counterparts
-            (\(\hat{l}^{\text{semantic}}_k\), \(\hat{l}^{\text{geometric}}_k\), \(\hat{l}^{\text{description}}_k\)).</p>
-          <p>On the other hand, SR<sub>PRD</sub> is measured according to the predicted preference that matches the
-            ground truth. The preference criteria for each scene are manually designed. We formulate SR<sub>PRD</sub> as
-            follows:</p>
-          <p>$$\text{SR}_\text{PRD} = \frac{1}{M} \sum_{i=1}^{M} \mathbb{I}(l^{\text{preference}}_{i} =
-            \hat{l}^{\text{preference}}_{i})$$ </p>
-          <p>where the indicator function \(\mathbb{I}\) checks for a match between predicted description and ground
-            truth preferences. SR<sub>PRD</sub> evaluates whether the predicted preferences
-            \(l^{\text{preference}}_{i}\) are in alignment with the ground truth preferences
-            \(\hat{l}^{\text{preference}}_{i}\) across a defined set of scenes.</p>
         </div>
       </div>
     </div>
@@ -415,80 +380,15 @@
   <!-- End of Baselines & Metrics -->
 
   <!-- Results -->
-  <section class="hero is-small" style="margin-bottom: 35px;">
+  <!-- <section class="hero is-small" style="margin-bottom: 35px;">
     <div class="hero-body">
       <div class="container">
         <h2 class="title is-3">Results</h2>
         <div id="Results">
-          <div class="image-row">
-            <img src="assets/images/fig-vpi-table1.png" alt="Image 1" class="image" data-href="#image1">
-            <!-- <figcaption>Table 1</figcaption> -->
-            <img src="assets/images/fig-vpi-table2.png" alt="Image 2" class="image" data-href="#image2">
-            <!-- <figcaption>Table 2</figcaption> -->
-            <img src="assets/images/fig-vpi-table3.png" alt="Image 3" class="image" data-href="#image3">
-            <!-- <figcaption>Table 3</figcaption> -->
-            <img src="assets/images/fig-vpi-table4.png" alt="Image 4" class="image" data-href="#image4">
-            <!-- <figcaption>Table 4</figcaption> -->
-          </div>
-          
-          <h1 style="font-size: 24px;">Block Task</h1>
-          Firstly, Table <a href="#exp:visual-reasoning">1</a> compares the visual reasoning performance of our method against the ablation of our method.
-          The results indicate that our method outperforms the naive approach in understanding both the semantic and
-          geometric properties in between an image sequence.
-          Especially the results of \(0.72 \pm 0.11\) demonstrate the superior visual reasoning ability of our method.
-          In contrast, the MLLM-Naive model shows limited ability in extracting visual signals between images with
-          \(\text{SR}_{\text{VRD}}\) of \(0.40 \pm 0.15\) for the same task.
-          This result highlights the effectiveness of our VRD template-based approach in recognizing the visual
-          residuals within image sequences.
-
-          From the results in Table <a href="#exp:preference-reasoning">2</a>, we compare the spatial pattern preference
-          reasoning performance of our method to three other baseline approaches.
-          Our method shows outstanding reasoning preference performance in the Block Task.
-          This highlights the benefits of our prompting method as compared to the other baselines.
-          Although the MDPE approach was expected to get a perfect score, MDPE did not achieve a score of \(1.0\)
-          (indicating that this model is always correct).
-          This poor performance of MDPE is mainly due to the parameter sensitivity used in its function function.
-          Such sensitivity often leads to the recognition of multiple preferences, resulting in erroneous preference
-          inferences.
-          MLLM-L2R also exhibits limited effectiveness primarily because relying solely on the responses of the MLLM for
-          position information is impractical; they do not account for specific geometric locations.
-          From the experiment results, we would like to emphasize that our method has a high potential for visual
-          reasoning tasks, taking into account spatial pattern preferences.
-
-          <br>
-          <br>
-          <h1 style="font-size: 24px;">Polygon Task</h1>
-          On the Polygon task, as detailed in Table <a href="#exp:visual-reasoning">1</a>, our methodology significantly outperforms the baseline model, indicating superior visual reasoning accuracy.
-          Specifically, our approach achieves a visual reasoning accuracy of \( 0.79 \pm 0.13 \) while the baseline records a lower accuracy of \(0.56 \pm 0.23\).
-          This performance gap shows an enhanced ability of our method to accurately predict visual contexts within image sequences, especially in tasks involving complex geometric shapes such as polygons.
-          
-          The results in Table <a href="#exp:preference-reasoning">3</a> show that our method consistently outperforms other MLLM-based approaches for semantic preference reasoning in the Polygon task.
-          In comparison, the MLLM-Naive method performs poorly with \(0.20\) for color and \(0.70\) for shape, indicating the limitations of naive models in capturing semantic properties.
-          On the other hand, the MLLM-L2R model shows slight improvements, achieving a score of \(0.30\) for color and \(0.80\) for shape.
-          However, these results still do not reach our reasoning preference performance.
-          Notably, MDPE achieves the perfect scores (=\(1.0\)) both on color and shape criteria. 
-          However, it is important to know that the performance of MDPE depends on the manual tuning of the preference feature functions.
-          These results imply that our method can successfully capture semantic preferences without any manual feature engineering, such as predefining a list of object attributes.
-
-          <br>
-          <br>
-          <h1 style="font-size: 24px;">Household Task</h1>
-          The metric of \(\text{SR}_{\text{VRD}}\), presented in Table <a href="#exp:visual-reasoning">4</a> compared the visual reasoning performance of our approach against the ablation of our method, which was evaluated six times respectively.
-          In particular, the results of \(0.63 \pm 0.08\) demonstrated the higher visual reasoning performance of our method.
-          In contrast, the MLLM-Naive model showed a limited ability to extract visual signals between images with \(\text{SR}_{\text{VRD}}\) of \(0.28 \pm 0.19\) for the same task. 
-          These results support the effectiveness of our VRD template-based approach in recognition of visual residuals within image sequences.
-          
-          Each type of preference was evaluated six times, and performance was measured in terms of \(\text{SR}_{\text{PRD}}\).
-          As illustrated in Fig. <a href="#framework">1</a> in each step, the robot performs to move objects and captures images.
-          The results of our method in Table <a href="#exp:preference-reasoning">4</a> are consistent with our simulation results, indicating the balanced performance of our method in spatial pattern and semantic preference reasoning. 
-          Compared to other MLLM-based approaches, they showed subpar performance in recognizing spatial patterns and semantic properties. 
-          We can notice that MLLM tends to misunderstand the spatial arrangements or semantic properties of objects without explicit annotation by VRD.
-          While MDPE performs as effectively as our approach for both types of preference, it remains highly dependent on the need for handcrafted features.
-          These results support the practical effectiveness of our method and support its successful application in real-world scenarios.          
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
   <!-- End of Results -->
 
 
@@ -499,22 +399,22 @@
         <h2 class="title is-3">Real World Demonstration</h2>
         <div id="module">
           <div id="realworld">
-            <video poster="" id="video1" autoplay controls muted loop height="100%">
+            <!-- <video poster="" id="video1" autoplay controls muted loop height="100%"> -->
               <!-- Your video file here -->
-              <source src="assets/videos/real_world.mp4" type="video/mp4">
-            </video>
+              <!-- <source src="assets/videos/real_world.mp4" type="video/mp4"> -->
+            <!-- </video> -->
+            <a href="#realworld">
+              <img src="assets/images/fig4_realworld.png" alt="MY ALT TEXT" width="100%" />
+            </a>
+
             <h2 class="content has-text-justified" style="text-align: left;">
-              In this experiment, we consider a scene with different objects placed on a desk.
-              We designed a task that categorizes objects based on similarity. The reasoning criteria, termed
-              <strong>similarity</strong>, varies for each experiment and serves as the ground truth for evaluating
-              reasoning abilities.
-              Each type of <strong>similarity</strong> was evaluated five times, and performance was measured using the
-              overall success rate (i.e., both Sta. S/R and Rea. S/R).
-              From this experiment, we insist that the reasonable place varies depending on the task description given
-              as input. Furthermore, we are able to accurately determine the stable positions to place the objects by
-              reconstructing the robot's ego-centric view with the real-to-sim method.
+              We validate the practicality of our proposed method for operating a real robot in the Place and Sweep tasks through two main experiments. 
+              First, we evaluate the time efficiency of our approach by comparing our proposed framework and manual control using a keyboard, where the user can move the end-effector in six different directions (i.e., forward, backward, right, left, up, and down).
+              Furthermore, we assess the task performance of our approach in comparison to the baseline algorithms (i.e., SAC, DIAYN, QSD-RL, and DLPG). 
+              This comparative analysis is conducted in real-world scenarios, where we evaluate the robustness of each model in dealing with noisy depth images, which can significantly impact their performance. 
+              By examining both the success rates and the diversity of the generated options, we aim to demonstrate the effectiveness and adaptability of our proposed method in various manipulation tasks.
             </h2>
-          </div>
+          </ßßßdiv>
         </div>
       </div>
     </div>
